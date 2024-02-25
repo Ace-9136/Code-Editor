@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cd Server && npm install && node main.js"
+    "start": "cd Front-end && npm install && npm run build && cd ../Server && npm install && node main.js"
   },
   "keywords": [],
   "author": "",
