@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm-run-all build backendStart",
-    "build": "cd Front-End && npm install && npm run build",
+    "build": "npm-run-all frontend backendStart",
+    "frontend": "cd Front-End && npm install && npm run build",
     "backendStart": "cd Server && npm install && node main.js"
   },
   "keywords": [],
