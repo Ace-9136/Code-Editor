@@ -40,7 +40,7 @@ const Home = () => {
     <div className='HomePageWrapper'>
       <div>
         <Typography variant={"h4"} style={{display:"flex",justifyContent:'center'}} color={"#4aee88"}>
-                Welcome to Doc-editor
+                Welcome to Code Editor
         </Typography>
       
       <Card variant={"outlined"} style={{width: 400, padding: 20,  color: "#ffffff",backgroundColor: "#11161b",display:'flex',flexDirection:"column"}}>

@@ -7,9 +7,17 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const ACTIONS = require(`./Actions`);
+const path = require('path');
 const userSocketMap ={};
+
+app.use(express.static('../Front-End/dist'));
+
+app.use((req,res,next)=>{
+    res.sendFile(path.join(__dirname, '../Front-End/dist', 'index.html'));
+})
 function getAllConnectedClients(roomId) {
     // Map
+    
     return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
         (socketId) => {
             return {
@@ -21,14 +29,13 @@ function getAllConnectedClients(roomId) {
 }
 
 io.on('connection', (socket) => {
-    console.log('socket connected', socket.id);
 
     socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
         userSocketMap[socket.id] = username;
         socket.join(roomId);
         const clients = getAllConnectedClients(roomId);
         clients.forEach(({ socketId }) => {
-            io.to(socketId).emit('joined', {
+            io.to(socketId).emit(ACTIONS.JOINED, {
                 clients,
                 username,
                 socketId: socket.id,
@@ -36,18 +43,18 @@ io.on('connection', (socket) => {
         });
     });
 
-    socket.on('code_change', ({ roomId, code }) => {
-        socket.in(roomId).emit('code_change', { code });
+    socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
+        socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
     });
 
-    socket.on('code_change', ({ socketId, code }) => {
-        io.to(socketId).emit('code_change', { code });
+    socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
+        io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
     });
 
     socket.on('disconnecting', () => {
         const rooms = [...socket.rooms];
         rooms.forEach((roomId) => {
-            socket.in(roomId).emit('disconnected', {
+            socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
                 socketId: socket.id,
                 username: userSocketMap[socket.id],
             });
@@ -56,7 +63,6 @@ io.on('connection', (socket) => {
         socket.leave();
     });
 });
-
 
 const PORT= process.env.PORT || 5000;
 server.listen(PORT, ()=>{
