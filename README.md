@@ -22,6 +22,7 @@ This project is a Realtime Code Editor implemented using the MERN (MongoDB, Expr
 - **Backend:**
   - Node.js
   - Express.js
+  - MongoDB for database
   - WebSocket (Socket.io) for real-time communication
  
 ## Setup Instructions
