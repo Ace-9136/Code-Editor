@@ -18,6 +18,19 @@ color:white;
     border: none;
 }
 
+.chatbtn{
+    margin-bottom: 10px;
+    border: none;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
 .joinbtn,.leaveBtn{
     width: 100px;
     background-color: #4aee88;
@@ -64,6 +77,43 @@ footer{
 footer a{
     color: #4aee88;
 }
+.chatside {
+    position: fixed;
+    top: 0;
+    right: -400px; /* Initially hide the chatside off-screen */
+    background-color: #1c1e29; /* Background color */
+    color: #fff; /* Text color */
+    padding: 16px; /* Padding for content */
+    height: 100vh; /* Make it fill the entire height of the viewport */
+    width: 230px; /* Set width of chatside */
+    transition: right 0.3s ease-in-out; /* Add transition for smooth animation */
+  }
+  
+  .chatside.active {
+    right: 0; /* Display the chatside */
+  }
+  
+  
+  .chatbtn {
+    margin-bottom: 10px;
+    border: none;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* Styles for chat messages */
+  .chat{
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #2a2d3e;
+  }
 
 .mainWrap {
     display: grid;

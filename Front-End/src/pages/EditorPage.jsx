@@ -1,5 +1,6 @@
 import React, { useState,useRef, useEffect } from 'react'
 import { Client } from '../components/Client';
+import { Chat } from '../components/Chat'
 import "../App.css";
 import Editor from "../components/Editor";
 import { initSocket } from '../socket';
@@ -15,6 +16,7 @@ const EditorPage = () => {
   const reactNavigator = useNavigate();
   const {roomId}= useParams();
   const [clients,setClients]=useState([]);
+  const [showChat, setShowChat] = useState(false);
   
 
   useEffect(() => {
@@ -71,6 +73,11 @@ const EditorPage = () => {
     };
 }, []); 
 
+function toggleChat() {
+  setShowChat(!showChat);
+  console.log(location.state?.username);
+}
+
 async function copyRoomId() {
   try {
       await navigator.clipboard.writeText(roomId);
@@ -111,6 +118,7 @@ function leaveRoom() {
 </div>
 
                 </div>
+                <button className="btn chatbtn" onClick={toggleChat} >Chat</button>
                 <button className="btn copyBtn" onClick={copyRoomId} >
                     Copy ROOM ID
                 </button>
@@ -123,6 +131,9 @@ function leaveRoom() {
                         codeRef.current = code;
                     }}></Editor>
       </div>
+      <div className={`chatside ${showChat ? 'active' : ''}`}>
+      <Chat key= {location.state?.socketId} username={location.state.username}/>
+    </div>
     </div>
   )
 }
