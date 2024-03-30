@@ -7,6 +7,8 @@ import { initSocket } from '../socket';
 import { useLocation, useNavigate, Navigate,useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import ACTIONS from '../../Actions'; // Import all bindings
+import { HiMiniChatBubbleBottomCenter } from "react-icons/hi2";
+
 
 
 const EditorPage = () => {
@@ -75,7 +77,6 @@ const EditorPage = () => {
 
 function toggleChat() {
   setShowChat(!showChat);
-  console.log(location.state?.username);
 }
 
 async function copyRoomId() {
@@ -118,7 +119,7 @@ function leaveRoom() {
 </div>
 
                 </div>
-                <button className="btn chatbtn" onClick={toggleChat} >Chat</button>
+                <button className="btn chatbtn" onClick={toggleChat} >Chat <HiMiniChatBubbleBottomCenter/></button>
                 <button className="btn copyBtn" onClick={copyRoomId} >
                     Copy ROOM ID
                 </button>
@@ -130,9 +131,10 @@ function leaveRoom() {
         <Editor socketRef = {socketRef} roomId={roomId} onCodeChange={(code) => {
                         codeRef.current = code;
                     }}></Editor>
-      </div>
+      
       <div className={`chatside ${showChat ? 'active' : ''}`}>
-      <Chat key= {location.state?.socketId} username={location.state.username}/>
+      <Chat key= {location.state?.socketId} socketRef = {socketRef} roomId={roomId} username={location.state.username}/>
+    </div>
     </div>
     </div>
   )

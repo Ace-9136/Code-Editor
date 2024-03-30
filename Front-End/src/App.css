@@ -31,6 +31,8 @@ color:white;
     transition: all 0.3s ease-in-out;
 }
 
+
+
 .joinbtn,.leaveBtn{
     width: 100px;
     background-color: #4aee88;
@@ -77,43 +79,6 @@ footer{
 footer a{
     color: #4aee88;
 }
-.chatside {
-    position: fixed;
-    top: 0;
-    right: -400px; /* Initially hide the chatside off-screen */
-    background-color: #1c1e29; /* Background color */
-    color: #fff; /* Text color */
-    padding: 16px; /* Padding for content */
-    height: 100vh; /* Make it fill the entire height of the viewport */
-    width: 230px; /* Set width of chatside */
-    transition: right 0.3s ease-in-out; /* Add transition for smooth animation */
-  }
-  
-  .chatside.active {
-    right: 0; /* Display the chatside */
-  }
-  
-  
-  .chatbtn {
-    margin-bottom: 10px;
-    border: none;
-    background-color: white;
-    color: black;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-  }
-  
-  /* Styles for chat messages */
-  .chat{
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #2a2d3e;
-  }
 
 .mainWrap {
     display: grid;
@@ -167,4 +132,93 @@ footer a{
     font-size: 20px;
     line-height: 1.6;
     padding-top: 20px;
+}
+
+.chatside {
+    position: fixed;
+    top: 0;
+    right: -30%; /* Initially hide the chatside off-screen */
+    background-color: #1c1e29; /* Background color */
+    color: #fff; /* Text color */
+    padding: 16px; /* Padding for content */
+    height: 100vh; 
+    width: 25%; /* Set width of chatside */
+    transition: right 0.3s ease-in-out; 
+}
+  
+.chatside.active {
+    right: 0; /* Display the chatside */
+}
+   
+.chatbtn {
+    margin-bottom: 10px;
+    border: none;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.heading{
+    display: flex;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: 7500;
+    font-size: larger;
+    background-color: #2a2d3e;
+    justify-content: center;
+}
+.chatBottom{
+    display: flex;
+    position:fixed;
+    bottom:20px;
+    min-width: 25%;
+    justify-content: center; 
+    align-items: center;
+}
+.textbox {
+    background-color: white;
+    min-width: 80%;
+    color: black;
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 10px;
+}
+.msgheader{ 
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.chat-messages {
+    flex: 1;
+    overflow-y: auto; /* This will make the container scrollable when it overflows */
+    padding: 10px; /* Add padding for better readability */
+    height: 80vh;;
+  }
+
+
+.message-content{
+        display: block;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        font-size: medium;
+        margin-bottom: 10 px;
+        background-color: white;
+        color: black;
+        justify-content: center;
+        word-wrap: break-word; /* Allow long words to break and wrap onto the next line */
+
+}
+.timestamp{
+    font-size: small;
+    background-color:#2a2d3e; 
+    color: white;
+}
+.text{
+    padding: 5px;
 }

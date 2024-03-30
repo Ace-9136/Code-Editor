@@ -9,6 +9,8 @@ const server = http.createServer(app);
 const io = new Server(server);
 const ACTIONS = require(`./Actions`);
 const path = require('path');
+const Redis = require("ioredis");
+const redisClient = new Redis();
 
 app.use(express.static('../Front-End/dist'));
 
@@ -27,6 +29,9 @@ io.on('connection', (socket) => {
         await User.create({ socketId: socket.id, username, roomId });
         const clients = await getAllConnectedClients(roomId);
         io.to(roomId).emit(ACTIONS.JOINED, { clients, username, socketId: socket.id });
+        const existingMessages = await redisClient.lrange(`chat_messages_${roomId}`, 0, -1);
+        const parsedMessages = existingMessages.reverse().map((item) => JSON.parse(item));
+        io.to(roomId).emit("historical_messages", parsedMessages);
     });
 
     socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
@@ -39,6 +44,11 @@ io.on('connection', (socket) => {
         if (user) {
             io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
         }
+    });
+
+    socket.on("message", (data) => {
+        io.to(data.roomId).emit("message", data);
+        redisClient.lpush(`chat_messages_${data.roomId}`, JSON.stringify(data));
     });
 
     socket.on('disconnecting', async () => {
