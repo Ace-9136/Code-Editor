@@ -9,8 +9,27 @@ const server = http.createServer(app);
 const io = new Server(server);
 const ACTIONS = require(`./Actions`);
 const path = require('path');
+const { createClient } = require('redis');
 const Redis = require("ioredis");
-const redisClient = new Redis();
+
+async function connectToRedis() {
+    const redisClient = new Redis({
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
+        password: process.env.REDIS_PASSWORD,
+      });
+    console.log("Connect to redisClient");
+    return redisClient;
+}
+async function connectToMongoDB() {
+    try {
+        await mongoose.connect(process.env.MongoURL, {
+        });
+        console.log('Connected to MongoDB');
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+    }
+}
 
 app.use(express.static('../Front-End/dist'));
 
@@ -29,9 +48,21 @@ io.on('connection', (socket) => {
         await User.create({ socketId: socket.id, username, roomId });
         const clients = await getAllConnectedClients(roomId);
         io.to(roomId).emit(ACTIONS.JOINED, { clients, username, socketId: socket.id });
-        const existingMessages = await redisClient.lrange(`chat_messages_${roomId}`, 0, -1);
+        const redisClient = global.redisClient;
+        const chatMessagesKey = `chat_messages_${roomId}`;
+
+    // Check if the key exists
+    const keyExists = await redisClient.exists(chatMessagesKey);
+
+    if (keyExists) {
+        // Key exists, retrieve chat messages
+        const existingMessages = await redisClient.lrange(chatMessagesKey, 0, -1);
         const parsedMessages = existingMessages.reverse().map((item) => JSON.parse(item));
         io.to(roomId).emit("historical_messages", parsedMessages);
+    } else {
+        // Key doesn't exist, handle accordingly (e.g., send empty array)
+        io.to(roomId).emit("historical_messages", []);
+    }
     });
 
     socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
@@ -48,6 +79,7 @@ io.on('connection', (socket) => {
 
     socket.on("message", (data) => {
         io.to(data.roomId).emit("message", data);
+        const redisClient = global.redisClient; 
         redisClient.lpush(`chat_messages_${data.roomId}`, JSON.stringify(data));
     });
 
@@ -62,14 +94,14 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-    console.log(`Server started on ${PORT}`);
-});
+async function startServer() {
+    const redisClient = await connectToRedis();
+    global.redisClient = redisClient; // Make redisClient globally accessible
+    await connectToMongoDB();
+    server.listen(PORT, () => {
+        console.log(`Server started on ${PORT}`);
+    });
+}
 
-// Connect to MongoDB
-mongoose.connect(process.env.MongoURL, {
-}).then(() => {
-    console.log('Connected to MongoDB');
-}).catch((err) => {
-    console.error('Error connecting to MongoDB', err);
-});
+startServer();
+
