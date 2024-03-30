@@ -1,11 +1,14 @@
 import React, { useState,useRef, useEffect } from 'react'
 import { Client } from '../components/Client';
+import { Chat } from '../components/Chat'
 import "../App.css";
 import Editor from "../components/Editor";
 import { initSocket } from '../socket';
 import { useLocation, useNavigate, Navigate,useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import ACTIONS from '../../Actions'; // Import all bindings
+import { HiMiniChatBubbleBottomCenter } from "react-icons/hi2";
+
 
 
 const EditorPage = () => {
@@ -15,6 +18,7 @@ const EditorPage = () => {
   const reactNavigator = useNavigate();
   const {roomId}= useParams();
   const [clients,setClients]=useState([]);
+  const [showChat, setShowChat] = useState(false);
   
 
   useEffect(() => {
@@ -71,6 +75,10 @@ const EditorPage = () => {
     };
 }, []); 
 
+function toggleChat() {
+  setShowChat(!showChat);
+}
+
 async function copyRoomId() {
   try {
       await navigator.clipboard.writeText(roomId);
@@ -111,6 +119,7 @@ function leaveRoom() {
 </div>
 
                 </div>
+                <button className="btn chatbtn" onClick={toggleChat} >Chat <HiMiniChatBubbleBottomCenter/></button>
                 <button className="btn copyBtn" onClick={copyRoomId} >
                     Copy ROOM ID
                 </button>
@@ -122,7 +131,11 @@ function leaveRoom() {
         <Editor socketRef = {socketRef} roomId={roomId} onCodeChange={(code) => {
                         codeRef.current = code;
                     }}></Editor>
-      </div>
+      
+      <div className={`chatside ${showChat ? 'active' : ''}`}>
+      <Chat key= {location.state?.socketId} socketRef = {socketRef} roomId={roomId} username={location.state.username}/>
+    </div>
+    </div>
     </div>
   )
 }
