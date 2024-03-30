@@ -4,8 +4,9 @@ const ACTIONS = {
     DISCONNECTED: 'disconnected',
     CODE_CHANGE: 'code-change',
     SYNC_CODE: 'sync-code',
-    LEAVE: 'leave',
-    MESSAGE:'message'
+    LEAVE: 'disconnecting',
+    MESSAGE:'message',
+    HISTORICALMESSAGE: "historicalMessage"
 };
 
 export default ACTIONS;

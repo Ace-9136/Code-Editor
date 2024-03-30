@@ -18,7 +18,7 @@ export const Chat = ({ socketRef, roomId, username }) => {
   useEffect(() => {
     // Fetch historical messages when the component mounts
       if(socketRef.current){
-        socketRef.current.on("historical_messages", function(data) {
+        socketRef.current.on(ACTIONS.HISTORICALMESSAGE, function(data) {
           setMessages(data);
       });
     };
@@ -26,7 +26,7 @@ export const Chat = ({ socketRef, roomId, username }) => {
   
 useEffect( ()=>{
   if(socketRef.current){
-    socketRef.current.on("message", function(data) {
+    socketRef.current.on(ACTIONS.MESSAGE, function(data) {
       setMessages(prevMessages => [...prevMessages, data]);
       
   });

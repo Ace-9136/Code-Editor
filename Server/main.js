@@ -2,14 +2,13 @@ const express = require('express');
 const http = require("http");
 const { Server } = require('socket.io');
 const mongoose = require('mongoose');
-const User = require('./Model/user'); // Assuming you have a User model
+const User = require('./Model/user'); 
 require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const ACTIONS = require(`./Actions`);
 const path = require('path');
-const { createClient } = require('redis');
 const Redis = require("ioredis");
 
 async function connectToRedis() {
@@ -58,10 +57,10 @@ io.on('connection', (socket) => {
         // Key exists, retrieve chat messages
         const existingMessages = await redisClient.lrange(chatMessagesKey, 0, -1);
         const parsedMessages = existingMessages.reverse().map((item) => JSON.parse(item));
-        io.to(roomId).emit("historical_messages", parsedMessages);
+        io.to(roomId).emit(ACTIONS.HISTORICALMESSAGE, parsedMessages);
     } else {
         // Key doesn't exist, handle accordingly (e.g., send empty array)
-        io.to(roomId).emit("historical_messages", []);
+        io.to(roomId).emit(ACTIONS.HISTORICALMESSAGE, []);
     }
     });
 
@@ -77,13 +76,13 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on("message", (data) => {
+    socket.on(ACTIONS.MESSAGE, (data) => {
         io.to(data.roomId).emit("message", data);
         const redisClient = global.redisClient; 
         redisClient.lpush(`chat_messages_${data.roomId}`, JSON.stringify(data));
     });
 
-    socket.on('disconnecting', async () => {
+    socket.on(ACTIONS.LEAVE, async () => {
         const user = await User.findOne({ socketId: socket.id });
         if (user) {
             socket.leave(user.roomId);
