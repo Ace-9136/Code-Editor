@@ -37,7 +37,7 @@ app.use((req,res,next)=>{
 });
 
 function getAllConnectedClients(roomId) {
-    return User.find({ roomId }); // Assuming you have a 'roomId' field in your user schema
+    return User.find({ roomId });
 }
 
 io.on('connection', (socket) => {
@@ -50,16 +50,13 @@ io.on('connection', (socket) => {
         const redisClient = global.redisClient;
         const chatMessagesKey = `chat_messages_${roomId}`;
 
-    // Check if the key exists
     const keyExists = await redisClient.exists(chatMessagesKey);
 
     if (keyExists) {
-        // Key exists, retrieve chat messages
         const existingMessages = await redisClient.lrange(chatMessagesKey, 0, -1);
         const parsedMessages = existingMessages.reverse().map((item) => JSON.parse(item));
         io.to(roomId).emit(ACTIONS.HISTORICALMESSAGE, parsedMessages);
     } else {
-        // Key doesn't exist, handle accordingly (e.g., send empty array)
         io.to(roomId).emit(ACTIONS.HISTORICALMESSAGE, []);
     }
     });
@@ -69,7 +66,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on(ACTIONS.SYNC_CODE, async ({ socketId, code }) => {
-        // Assuming you have a method to find user by socketId
         const user = await User.findOne({ socketId });
         if (user) {
             io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
@@ -95,7 +91,7 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 5000;
 async function startServer() {
     const redisClient = await connectToRedis();
-    global.redisClient = redisClient; // Make redisClient globally accessible
+    global.redisClient = redisClient; 
     await connectToMongoDB();
     server.listen(PORT, () => {
         console.log(`Server started on ${PORT}`);
